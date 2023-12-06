@@ -1,0 +1,2 @@
+git clone https://github.com/Pur1e/vending_machine.git
+git status
