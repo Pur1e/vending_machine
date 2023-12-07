@@ -9,6 +9,7 @@ public class AppRunner {
 	
 	private static boolean isExit = false;
 	private final UniversalArray<Product> products = new UniversalArrayImpl<>();
+	private final BanknotesAcceptor banknotesAcceptor;
 	private final CoinAcceptor coinAcceptor;
 	private int minPriceOfProducts;
 	
@@ -21,6 +22,7 @@ public class AppRunner {
 				new Mars(ActionLetter.F, 80),
 				new Pistachios(ActionLetter.G, 130)
 		});
+		banknotesAcceptor = new BanknotesAcceptor(0);
 		coinAcceptor = new CoinAcceptor(0);
 	}
 	
@@ -44,7 +46,6 @@ public class AppRunner {
 		allowProducts.addAll(getAllowedProducts().toArray());
 		
 		choosePaymentType(allowProducts);
-		
 	}
 	
 	private void choosePaymentType(UniversalArray<Product> products) {
@@ -62,6 +63,7 @@ public class AppRunner {
 				payWithCoins(products);
 				break;
 			case "b":
+				payWithBanknotes(products);
 				break;
 			default:
 				System.err.println("Недопустимая буква. Попрбуйте еще раз.");
@@ -82,17 +84,67 @@ public class AppRunner {
 	private void payWithCoins(UniversalArray<Product> products) {
 		marking();
 		print("Выберите действие");
-		print(" a - Пополнить баланс (10сом)");
+		print(" 1 - Пополнить баланс (3сом)");
+		print(" 2 - Пополнить баланс (5сом)");
+		print(" 3 - Пополнить баланс (10сом)");
 		showActions(products);
 		print(" h - Выйти");
 		String action = fromConsole().substring(0, 1);
 		
-		if ("a".equalsIgnoreCase(action)) {
-			coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-			print("\u001B[32m" + "Вы пополнили баланс на 10 coм" + "\u001B[0m");
-			return;
+		switch (action) {
+			case "1":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 3);
+				formatingOfReplenishment(3);
+				break;
+			case "2":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 5);
+				formatingOfReplenishment(5);
+				break;
+			case "3":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
+				formatingOfReplenishment(10);
+				break;
+			default:
+				buyingAction(action, products);
+				break;
 		}
+	}
+	
+	private void payWithBanknotes(UniversalArray<Product> products) {
+		marking();
+		print("Выберите действие");
+		print(" 1 - Пополнить баланс (20сом)");
+		print(" 2 - Пополнить баланс (50сом)");
+		print(" 3 - Пополнить баланс (100сом)");
+		print(" 4 - Пополнить баланс (200сом)");
+		showActions(products);
+		print(" h - Выйти");
+		String action = fromConsole().substring(0, 1);
 		
+		switch (action) {
+			case "1":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 20);
+				formatingOfReplenishment(20);
+				break;
+			case "2":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 50);
+				formatingOfReplenishment(50);
+				break;
+			case "3":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 100);
+				formatingOfReplenishment(100);
+				break;
+			case "4":
+				coinAcceptor.setAmount(coinAcceptor.getAmount() + 200);
+				formatingOfReplenishment(200);
+				break;
+			default:
+				buyingAction(action, products);
+				break;
+		}
+	}
+	
+	private void buyingAction(String action, UniversalArray<Product> products) {
 		try {
 			for (int i = 0; i < products.size(); i++) {
 				if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
@@ -112,7 +164,7 @@ public class AppRunner {
 	
 	private void showActions(UniversalArray<Product> products) {
 		for (int i = 0; i < products.size(); i++) {
-			print(String.format(" %s - %s", products.get(i).getActionLetter().getValue(), products.get(i).getName()));
+			print(String.format(" %s - Купить %s", products.get(i).getActionLetter().getValue(), products.get(i).getName()));
 		}
 	}
 	
@@ -140,5 +192,9 @@ public class AppRunner {
 	
 	private void marking() {
 		System.out.println("================================");
+	}
+	
+	private void formatingOfReplenishment(int price) {
+		print(String.format("\u001B[32mВы пополнили баланс на %d coм\u001B[0m", price));
 	}
 }

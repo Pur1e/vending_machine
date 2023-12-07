@@ -8,4 +8,6 @@ git status
 git push
 git commit -m "overeall commit"
 git push
-"git commit -a -m "Commit msg"" == "git add <file> -> git commit -m "Commit msg""
+"git commit -a -m "Commit msg"" == "git add <file> -> git commit -m "Commit msg" "
+git commit -a -m "Added ANSI-colors and 'ser' for better reading experience. Added feature of choose Payment method, finished side where you may pay with coins."
+git push
