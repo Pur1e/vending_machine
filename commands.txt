@@ -1,2 +1,8 @@
 git clone https://github.com/Pur1e/vending_machine.git
 git status
+git commit -m "Added finder of min price of products, if value in coin assepter less than minPrice of product will be notification. Added replenish of balance."
+git add commands.txt
+git commit -m "added commands.txt"
+git add src/
+git status
+git push
