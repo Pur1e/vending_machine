@@ -6,3 +6,6 @@ git commit -m "added commands.txt"
 git add src/
 git status
 git push
+git commit -m "overeall commit"
+git push
+"git commit -a -m "Commit msg"" == "git add <file> -> git commit -m "Commit msg""

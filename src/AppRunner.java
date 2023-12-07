@@ -33,7 +33,7 @@ public class AppRunner {
 	
 	private void startSimulation() {
 		findMinPrice();
-		System.out.println(minPriceOfProducts);
+		
 		print("В автомате доступны:");
 		showProducts(products);
 		
@@ -43,8 +43,30 @@ public class AppRunner {
 		UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
 		allowProducts.addAll(getAllowedProducts().toArray());
 		
+		choosePaymentType(allowProducts);
 		
-		chooseAction(allowProducts);
+	}
+	
+	private void choosePaymentType(UniversalArray<Product> products) {
+		
+		if (coinAcceptor.getAmount() < minPriceOfProducts) {
+			System.out.println("\u001B[33m" + "Ничего не купить, пополните баланс" + "\u001B[0m");
+		}
+		
+		print("Выберите способ оплаты: ");
+		print("a - Монетами");
+		print("b - Банкнотами");
+		String action = fromConsole().substring(0, 1);
+		switch (action) {
+			case "a":
+				payWithCoins(products);
+				break;
+			case "b":
+				break;
+			default:
+				System.err.println("Недопустимая буква. Попрбуйте еще раз.");
+				choosePaymentType(products);
+		}
 	}
 	
 	private UniversalArray<Product> getAllowedProducts() {
@@ -57,12 +79,9 @@ public class AppRunner {
 		return allowProducts;
 	}
 	
-	private void chooseAction(UniversalArray<Product> products) {
-		
-		if (coinAcceptor.getAmount() <= minPriceOfProducts) {
-			System.out.println("Ничего не купишь, кидай еще!");
-		}
-		
+	private void payWithCoins(UniversalArray<Product> products) {
+		marking();
+		print("Выберите действие");
 		print(" a - Пополнить баланс (10сом)");
 		showActions(products);
 		print(" h - Выйти");
@@ -70,7 +89,7 @@ public class AppRunner {
 		
 		if ("a".equalsIgnoreCase(action)) {
 			coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-			print("Вы пополнили баланс на 10");
+			print("\u001B[32m" + "Вы пополнили баланс на 10 coм" + "\u001B[0m");
 			return;
 		}
 		
@@ -85,12 +104,10 @@ public class AppRunner {
 					break;
 				}
 			}
-			
 		} catch (IllegalArgumentException e) {
 			print("Недопустимая буква. Попрбуйте еще раз.");
-			chooseAction(products);
+			payWithCoins(products);
 		}
-		
 	}
 	
 	private void showActions(UniversalArray<Product> products) {
@@ -109,12 +126,12 @@ public class AppRunner {
 		}
 	}
 	
-	private void findMinPrice(){
+	private void findMinPrice() {
 		int maxInt = Integer.MAX_VALUE;
 		for (int i = 0; i < products.size(); i++) {
-			maxInt=Integer.min(products.get(i).getPrice(), maxInt);
+			maxInt = Integer.min(products.get(i).getPrice(), maxInt);
 		}
-		minPriceOfProducts=maxInt;
+		minPriceOfProducts = maxInt;
 	}
 	
 	private void print(String msg) {
@@ -122,6 +139,6 @@ public class AppRunner {
 	}
 	
 	private void marking() {
-		System.out.println("================");
+		System.out.println("================================");
 	}
 }
