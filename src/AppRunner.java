@@ -151,14 +151,16 @@ public class AppRunner {
 					coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
 					print("Вы купили " + products.get(i).getName());
 					break;
-				} else if ("h".equalsIgnoreCase(action)) {
-					isExit = true;
-					break;
 				}
 			}
+			throw new IllegalArgumentException();
 		} catch (IllegalArgumentException e) {
-			print("Недопустимая буква. Попрбуйте еще раз.");
-			payWithCoins(products);
+			if ("h".equalsIgnoreCase(action)) {
+				isExit = true;
+			} else {
+				System.err.println("Недопустимая буква. Попрбуйте еще раз.");
+				choosePaymentType(products);
+			}
 		}
 	}
 	

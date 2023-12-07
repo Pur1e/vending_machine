@@ -11,4 +11,4 @@ git push
 "git commit -a -m "Commit msg"" == "git add <file> -> git commit -m "Commit msg" "
 git commit -a -m "Added ANSI-colors and 'ser' for better reading experience. Added feature of choose Payment method, finished side where you may pay with coins."
 git push
-git commit -a -m "Added a few types of replenishment to automat(3,5 and 10soms). Added BanknotesAcceptor(class), and payment by banknotes. "
+git commit -a -m "Added a few types of replenishment to automate(3,5 and 10 soms). Added BanknotesAcceptor(class), and payment by banknotes. "
