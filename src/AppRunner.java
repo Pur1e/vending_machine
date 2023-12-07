@@ -9,8 +9,7 @@ public class AppRunner {
 	
 	private static boolean isExit = false;
 	private final UniversalArray<Product> products = new UniversalArrayImpl<>();
-	private final BanknotesAcceptor banknotesAcceptor;
-	private final CoinAcceptor coinAcceptor;
+	private final CashAcceptor cashAcceptor;
 	private int minPriceOfProducts;
 	
 	private AppRunner() {
@@ -22,8 +21,7 @@ public class AppRunner {
 				new Mars(ActionLetter.F, 80),
 				new Pistachios(ActionLetter.G, 130)
 		});
-		banknotesAcceptor = new BanknotesAcceptor(0);
-		coinAcceptor = new CoinAcceptor(0);
+		cashAcceptor = new CashAcceptor(0);
 	}
 	
 	public static void run() {
@@ -40,7 +38,7 @@ public class AppRunner {
 		showProducts(products);
 		
 		marking();
-		print("В автомате монет на сумму: " + coinAcceptor.getAmount() + " coм");
+		print("В автомате монет на сумму: " + cashAcceptor.getAmount() + " coм");
 		
 		UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
 		allowProducts.addAll(getAllowedProducts().toArray());
@@ -50,7 +48,7 @@ public class AppRunner {
 	
 	private void choosePaymentType(UniversalArray<Product> products) {
 		
-		if (coinAcceptor.getAmount() < minPriceOfProducts) {
+		if (cashAcceptor.getAmount() < minPriceOfProducts) {
 			System.out.println("\u001B[33m" + "Ничего не купить, пополните баланс" + "\u001B[0m");
 		}
 		
@@ -74,7 +72,7 @@ public class AppRunner {
 	private UniversalArray<Product> getAllowedProducts() {
 		UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
 		for (int i = 0; i < products.size(); i++) {
-			if (coinAcceptor.getAmount() >= products.get(i).getPrice()) {
+			if (cashAcceptor.getAmount() >= products.get(i).getPrice()) {
 				allowProducts.add(products.get(i));
 			}
 		}
@@ -93,15 +91,15 @@ public class AppRunner {
 		
 		switch (action) {
 			case "1":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 3);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 3);
 				formattingOfReplenishment(3);
 				break;
 			case "2":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 5);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 5);
 				formattingOfReplenishment(5);
 				break;
 			case "3":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 10);
 				formattingOfReplenishment(10);
 				break;
 			default:
@@ -123,19 +121,19 @@ public class AppRunner {
 		
 		switch (action) {
 			case "1":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 20);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 20);
 				formattingOfReplenishment(20);
 				break;
 			case "2":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 50);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 50);
 				formattingOfReplenishment(50);
 				break;
 			case "3":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 100);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 100);
 				formattingOfReplenishment(100);
 				break;
 			case "4":
-				coinAcceptor.setAmount(coinAcceptor.getAmount() + 200);
+				cashAcceptor.setAmount(cashAcceptor.getAmount() + 200);
 				formattingOfReplenishment(200);
 				break;
 			default:
@@ -148,7 +146,7 @@ public class AppRunner {
 		try {
 			for (int i = 0; i < products.size(); i++) {
 				if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-					coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
+					cashAcceptor.setAmount(cashAcceptor.getAmount() - products.get(i).getPrice());
 					print("Вы купили " + products.get(i).getName());
 					break;
 				}
