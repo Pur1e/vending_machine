@@ -94,15 +94,15 @@ public class AppRunner {
 		switch (action) {
 			case "1":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 3);
-				formatingOfReplenishment(3);
+				formattingOfReplenishment(3);
 				break;
 			case "2":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 5);
-				formatingOfReplenishment(5);
+				formattingOfReplenishment(5);
 				break;
 			case "3":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-				formatingOfReplenishment(10);
+				formattingOfReplenishment(10);
 				break;
 			default:
 				buyingAction(action, products);
@@ -124,19 +124,19 @@ public class AppRunner {
 		switch (action) {
 			case "1":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 20);
-				formatingOfReplenishment(20);
+				formattingOfReplenishment(20);
 				break;
 			case "2":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 50);
-				formatingOfReplenishment(50);
+				formattingOfReplenishment(50);
 				break;
 			case "3":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 100);
-				formatingOfReplenishment(100);
+				formattingOfReplenishment(100);
 				break;
 			case "4":
 				coinAcceptor.setAmount(coinAcceptor.getAmount() + 200);
-				formatingOfReplenishment(200);
+				formattingOfReplenishment(200);
 				break;
 			default:
 				buyingAction(action, products);
@@ -194,7 +194,7 @@ public class AppRunner {
 		System.out.println("================================");
 	}
 	
-	private void formatingOfReplenishment(int price) {
+	private void formattingOfReplenishment(int price) {
 		print(String.format("\u001B[32mВы пополнили баланс на %d coм\u001B[0m", price));
 	}
 }
