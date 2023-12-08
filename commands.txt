@@ -14,3 +14,7 @@ git push
 git commit -a -m "Added a few types of replenishment to automate(3,5 and 10 soms). Added BanknotesAcceptor(class), and payment by banknotes. "
 git commit -a -m "Fixed bug in buyingAction, now serr(IllegalArgumentException()) working correctly"
 git push
+git commit -a -m "deleted BanknotesAcceptor(class) cause no usage. CoinAcceptorWas refactored to CashAcceptor. So now we can use coins or bills to replenishment balance. Now range of replenishment sum is from 3soms to 200soms."
+git push
+git commit -a -m "added Payment methods now you can replenishment balance with card up to 1000som with single replenishment, for action you need card details and msg code"
+git push

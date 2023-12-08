@@ -1,5 +1,7 @@
 import enums.ActionLetter;
 import model.*;
+import payment.CardAcceptor;
+import payment.CashAcceptor;
 import util.UniversalArray;
 import util.UniversalArrayImpl;
 
@@ -10,7 +12,10 @@ public class AppRunner {
 	private static boolean isExit = false;
 	private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 	private final CashAcceptor cashAcceptor;
+	private final CardAcceptor cardAcceptor;
 	private int minPriceOfProducts;
+	private int balance;
+	
 	
 	private AppRunner() {
 		products.addAll(new Product[] {
@@ -22,6 +27,8 @@ public class AppRunner {
 				new Pistachios(ActionLetter.G, 130)
 		});
 		cashAcceptor = new CashAcceptor(0);
+		cardAcceptor = new CardAcceptor(0);
+		
 	}
 	
 	public static void run() {
@@ -31,14 +38,26 @@ public class AppRunner {
 		}
 	}
 	
+	private static boolean isThereAllDigits(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isDigit(s.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void startSimulation() {
+		balance = cashAcceptor.getAmount() + cardAcceptor.getAmount();
+		System.out.println("ballance" + balance);
+		
 		findMinPrice();
 		
 		print("В автомате доступны:");
 		showProducts(products);
 		
 		marking();
-		print("В автомате монет на сумму: " + cashAcceptor.getAmount() + " coм");
+		print("В автомате монет на сумму: " + balance + " coм");
 		
 		UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
 		allowProducts.addAll(getAllowedProducts().toArray());
@@ -48,24 +67,44 @@ public class AppRunner {
 	
 	private void choosePaymentType(UniversalArray<Product> products) {
 		
-		if (cashAcceptor.getAmount() < minPriceOfProducts) {
+		if (balance < minPriceOfProducts) {
 			System.out.println("\u001B[33m" + "Ничего не купить, пополните баланс" + "\u001B[0m");
 		}
 		
-		print("Выберите способ оплаты: ");
-		print("a - Монетами");
-		print("b - Банкнотами");
-		String action = fromConsole().substring(0, 1);
-		switch (action) {
-			case "a":
-				payWithCoins(products);
-				break;
-			case "b":
-				payWithBanknotes(products);
-				break;
-			default:
-				System.err.println("Недопустимая буква. Попрбуйте еще раз.");
-				choosePaymentType(products);
+		print("Выберите способ пополнения: ");
+		print(" 1 - Монетами");
+		print(" 2 - Банкнотами");
+		print(" 3 - Картой");
+		print(" h - Выйти");
+		
+		if (balance > minPriceOfProducts) {
+			marking();
+			print("Вы можете купить:");
+			showActions(products);
+			print("\u001B[33m Вы можете купить товар или" +
+					" пополнить баланс выбрав способ пополнения \u001B[0m");
+		}
+		
+		
+		try {
+			String action = fromConsole().substring(0, 1);
+			
+			switch (action) {
+				case "1":
+					payWithCoins(products);
+					break;
+				case "2":
+					payWithBanknotes(products);
+					break;
+				case "3":
+					payWithCard(products);
+					break;
+				default:
+					buyingAction(action, products);
+			}
+		} catch (StringIndexOutOfBoundsException e) {
+			System.err.println("Пустая строка!");
+			choosePaymentType(products);
 		}
 	}
 	
@@ -85,7 +124,6 @@ public class AppRunner {
 		print(" 1 - Пополнить баланс (3сом)");
 		print(" 2 - Пополнить баланс (5сом)");
 		print(" 3 - Пополнить баланс (10сом)");
-		showActions(products);
 		print(" h - Выйти");
 		String action = fromConsole().substring(0, 1);
 		
@@ -115,7 +153,6 @@ public class AppRunner {
 		print(" 2 - Пополнить баланс (50сом)");
 		print(" 3 - Пополнить баланс (100сом)");
 		print(" 4 - Пополнить баланс (200сом)");
-		showActions(products);
 		print(" h - Выйти");
 		String action = fromConsole().substring(0, 1);
 		
@@ -142,12 +179,88 @@ public class AppRunner {
 		}
 	}
 	
+	private void payWithCard(UniversalArray<Product> products) {
+		marking();
+		print("Выберите действие");
+		print(" a - Пополнить баланс");
+		print(" h - Выйти");
+		
+		String action = fromConsole().substring(0, 1);
+		
+		if (action.equals("a")) {
+			System.out.print("Введите номер карты: ");
+			while (true) {
+				try {
+					
+					String cardNum = fromConsole();
+					if (cardNum.length() != 16 || ! isThereAllDigits(cardNum)) {
+						throw new IllegalArgumentException();
+					}
+					
+					break;
+				} catch (IllegalArgumentException e) {
+					System.err.println("Неправильный ввод. попробуйте ещё!");
+				}
+			}
+			
+			print("Код подверждения - " + cardAcceptor.getCode());
+			System.out.print("Введите четырехзначный одноразовый пароль: ");
+			while (true) {
+				try {
+					String pass = fromConsole();
+					
+					if (! pass.equalsIgnoreCase(cardAcceptor.getCode())) {
+						throw new IllegalArgumentException();
+					}
+					
+					break;
+				} catch (IllegalArgumentException e) {
+					System.err.println("Неправильный пароль. попробуйте ещё!");
+				}
+			}
+			
+			System.out.print("Введите сумму для пополнения(Однаразовый лимит полполнения 1000с): ");
+			int intSum;
+			while (true) {
+				try {
+					String sum = fromConsole();
+					
+					if (sum.length() > 5 || ! isThereAllDigits(sum)) {
+						throw new IllegalArgumentException();
+					}
+					
+					intSum = Integer.parseInt(sum);
+					if (intSum > 1000) {
+						throw new IllegalArgumentException();
+					}
+					
+					break;
+				} catch (IllegalArgumentException e) {
+					System.err.println("Неправильный ввод. попробуйте ещё!");
+				}
+			}
+			
+			cardAcceptor.setAmount(cardAcceptor.getAmount() + intSum);
+			formattingOfReplenishment(intSum);
+		} else {
+			buyingAction(action, products);
+		}
+	}
+	
 	private void buyingAction(String action, UniversalArray<Product> products) {
 		try {
 			for (int i = 0; i < products.size(); i++) {
 				if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-					cashAcceptor.setAmount(cashAcceptor.getAmount() - products.get(i).getPrice());
-					print("Вы купили " + products.get(i).getName());
+					
+					if (cashAcceptor.getAmount() > cardAcceptor.getAmount()) {
+						cashAcceptor.setAmount(cashAcceptor.getAmount() - products.get(i).getPrice());
+					} else {
+						cardAcceptor.setAmount(cardAcceptor.getAmount() - products.get(i).getPrice());
+					}
+					
+					print("\u001B[35m Вы купили " + products.get(i).getName() + "\u001B[0m");
+					System.out.println();
+					startSimulation();
 					break;
 				}
 			}
@@ -169,7 +282,7 @@ public class AppRunner {
 	}
 	
 	private String fromConsole() {
-		return new Scanner(System.in).nextLine();
+		return new Scanner(System.in).nextLine().trim();
 	}
 	
 	private void showProducts(UniversalArray<Product> products) {
